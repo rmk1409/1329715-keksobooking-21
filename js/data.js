@@ -35,6 +35,8 @@ const mapPins = document.querySelector(`.map__pins`);
 
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
+const adsData = generateAds();
+
 function generateRandom(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -148,7 +150,7 @@ function fillCardInfo(pinData) {
 }
 
 window.data = {
-  generateAds,
+  ads: adsData,
   locatePins,
   fillCardInfo
 };
