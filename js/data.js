@@ -21,7 +21,7 @@ const MIN_FEATURE_COUNT = 1;
 const MIN_PHOTO_COUNT = 1;
 
 const point = {
-  minX: 100,
+  minX: 250,
   maxX: 1100,
   minY: 130,
   maxY: 560
@@ -30,12 +30,10 @@ const point = {
 const SHIFT_PIN_X = 25;
 const SHIFT_PIN_Y = 70;
 
-const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const mapPins = document.querySelector(`.map__pins`);
 
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
-const mapFiltersContainer = document.querySelector(`.map__filters-container`);
 
 function generateRandom(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -103,10 +101,6 @@ function locatePins(pinsData) {
   mapPins.appendChild(fragment);
 }
 
-map.classList.remove(`map--faded`);
-const pinsData = generateAds();
-locatePins(pinsData);
-
 function addPhotos(info, pinData) {
   const photos = info.querySelector(`.popup__photos`);
   const fragment = document.createDocumentFragment();
@@ -153,5 +147,8 @@ function fillCardInfo(pinData) {
   return info;
 }
 
-const info = fillCardInfo(pinsData[0]);
-mapFiltersContainer.insertAdjacentElement(`beforebegin`, info);
+window.data = {
+  generateAds,
+  locatePins,
+  fillCardInfo
+};
