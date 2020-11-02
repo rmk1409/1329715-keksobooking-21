@@ -1,5 +1,7 @@
 'use strict';
 
+const MAIN_BUTTON_CODE = 0;
+
 const mainPinData = {
   defaultTop: 375,
   defaultLeft: 570,
@@ -21,11 +23,24 @@ const mainPin = document.querySelector(`.map__pin--main`);
 const map = document.querySelector(`.map`);
 const adForm = document.querySelector(`.ad-form`);
 const mapFilters = document.querySelector(`.map__filters`);
-
 const mapFiltersContainer = document.querySelector(`.map__filters-container`);
-const address = document.querySelector(`#address`);
+const address = adForm.querySelector(`#address`);
 
 let state = false;
+
+address.disabled = true;
+
+function onMainPinClick(evt) {
+  if (evt.button === MAIN_BUTTON_CODE) {
+    pageActivation();
+  }
+}
+
+function onMainPinEnterClick(evt) {
+  if (evt.key === `Enter`) {
+    pageActivation();
+  }
+}
 
 function setAddress() {
   const y = state ? mainPinData.getDefaultActiveY() : mainPinData.getY();
@@ -34,36 +49,18 @@ function setAddress() {
   address.value = `${x}, ${y}`;
 }
 
-function onMainPinClick(evt) {
-  const MAIN_BUTTON_CODE = 0;
+function pageInactivation() {
+  mainPin.addEventListener(`mousedown`, onMainPinClick);
+  mainPin.addEventListener(`keydown`, onMainPinEnterClick);
 
-  evt.preventDefault();
-
-  if (evt.button === MAIN_BUTTON_CODE) {
-    pageActivation();
-  }
-}
-
-function onMainPinEnterClick(evt) {
-  evt.preventDefault();
-
-  if (evt.key === `Enter`) {
-    pageActivation();
-  }
-}
-
-mainPin.addEventListener(`mousedown`, onMainPinClick);
-mainPin.addEventListener(`keydown`, onMainPinEnterClick);
-
-function pageInActivation() {
   state = false;
   map.classList.add(`map--faded`);
   adForm.classList.add(`ad-form--disabled`);
 
-  for (let fieldset of adForm) {
+  for (let fieldset of adForm.children) {
     fieldset.disabled = true;
   }
-  for (let child of mapFilters) {
+  for (let child of mapFilters.children) {
     child.disabled = true;
   }
 
@@ -80,32 +77,36 @@ function locateData() {
 }
 
 function removeData() {
-  document.querySelectorAll(`.map__pin[type=button]`).forEach((el) => el.remove());
   const info = document.querySelector(`.map__card`);
   if (info) {
     info.remove();
   }
+  document.querySelectorAll(`.map__pin[type=button]`)
+    .forEach((el) => el.remove());
 }
 
 function pageActivation() {
+  mainPin.removeEventListener(`mousedown`, onMainPinClick);
+  mainPin.removeEventListener(`keydown`, onMainPinEnterClick);
+
   state = true;
   map.classList.remove(`map--faded`);
   adForm.classList.remove(`ad-form--disabled`);
 
-  for (let fieldset of adForm) {
+  for (let fieldset of adForm.children) {
     fieldset.disabled = false;
   }
-  for (let child of mapFilters) {
+  for (let child of mapFilters.children) {
     child.disabled = false;
   }
-  locateData();
 
+  locateData();
   setAddress();
 }
 
-pageInActivation();
+pageInactivation();
 
 window.page = {
   activation: pageActivation,
-  inactivation: pageInActivation
+  inactivation: pageInactivation
 };
