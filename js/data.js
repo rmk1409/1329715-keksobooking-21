@@ -1,7 +1,7 @@
 'use strict';
 
 const AD_COUNT = 8;
-const TYPE_RUS = {
+const APARTMENT_TYPES = {
   palace: `Дворец`,
   flat: `Квартира`,
   house: `Дом`,
@@ -27,19 +27,9 @@ const point = {
   maxY: 560
 };
 
-const SHIFT_PIN_X = 25;
-const SHIFT_PIN_Y = 70;
-
-const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-const mapPins = document.querySelector(`.map__pins`);
-
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
 const adsData = generateAds();
-
-function generateRandom(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
 
 function generateAds() {
   const ads = [];
@@ -47,25 +37,26 @@ function generateAds() {
   for (let i = 0; i < AD_COUNT; i++) {
     const number = i + 1;
 
-    const x = generateRandom(point.minX, point.maxX);
-    const y = generateRandom(point.minY, point.maxY);
-    const types = Object.keys(TYPE_RUS);
+    const x = window.generateRandom(point.minX, point.maxX);
+    const y = window.generateRandom(point.minY, point.maxY);
+    const types = Object.keys(APARTMENT_TYPES);
     const curAd = {
+      id: i,
       author: {
         avatar: `img/avatars/user0${number}.png`
       },
       offer: {
         title: `some-header0${number}`,
         address: `${x}, ${y}`,
-        price: generateRandom(1000, 10000),
-        type: types[generateRandom(0, types.length)],
-        rooms: generateRandom(MIN_ROOM_COUNT, MAX_ROOM_COUNT),
-        guests: generateRandom(MIN_GUEST_COUNT, MAX_GUEST_COUNT),
-        checkin: TIMES[generateRandom(0, TIMES.length)],
-        checkout: TIMES[generateRandom(0, TIMES.length)],
-        features: FEATURES.slice(0, generateRandom(MIN_FEATURE_COUNT, FEATURES.length + 1)),
+        price: window.generateRandom(1000, 10000),
+        type: types[window.generateRandom(0, types.length)],
+        rooms: window.generateRandom(MIN_ROOM_COUNT, MAX_ROOM_COUNT),
+        guests: window.generateRandom(MIN_GUEST_COUNT, MAX_GUEST_COUNT),
+        checkin: TIMES[window.generateRandom(0, TIMES.length)],
+        checkout: TIMES[window.generateRandom(0, TIMES.length)],
+        features: FEATURES.slice(0, window.generateRandom(MIN_FEATURE_COUNT, FEATURES.length + 1)),
         description: `description of 0${number}`,
-        photos: PHOTOS.slice(0, generateRandom(MIN_PHOTO_COUNT, PHOTOS.length + 1))
+        photos: PHOTOS.slice(0, window.generateRandom(MIN_PHOTO_COUNT, PHOTOS.length + 1))
       },
       location: {
         x,
@@ -76,31 +67,6 @@ function generateAds() {
     ads.push(curAd);
   }
   return ads;
-}
-
-
-function locatePin(pinData) {
-  const pin = pinTemplate.cloneNode(true);
-  const img = pin.querySelector(`img`);
-
-  pin.style.left = `${pinData.location.x + SHIFT_PIN_X}px`;
-  pin.style.top = `${pinData.location.y + SHIFT_PIN_Y}px`;
-
-  img.src = pinData.author.avatar;
-  img.alt = pinData.offer.title;
-
-  return pin;
-}
-
-function locatePins(pinsData) {
-  const fragment = document.createDocumentFragment();
-
-  for (let pinData of pinsData) {
-    const pin = locatePin(pinData);
-    fragment.appendChild(pin);
-  }
-
-  mapPins.appendChild(fragment);
 }
 
 function addPhotos(info, pinData) {
@@ -138,7 +104,7 @@ function fillCardInfo(pinData) {
   info.querySelector(`.popup__title`).textContent = pinData.offer.title;
   info.querySelector(`.popup__text--address`).textContent = pinData.offer.address;
   info.querySelector(`.popup__text--price`).textContent = `${pinData.offer.price}₽/ночь`;
-  info.querySelector(`.popup__type`).textContent = TYPE_RUS[pinData.offer.type];
+  info.querySelector(`.popup__type`).textContent = APARTMENT_TYPES[pinData.offer.type];
   info.querySelector(`.popup__text--capacity`).textContent = `${pinData.offer.rooms} комнаты для ${pinData.offer.guests} гостей`;
   info.querySelector(`.popup__text--time`).textContent = `Заезд после ${pinData.offer.checkin}, выезд до ${pinData.offer.checkout}`;
   addFeatures(info, pinData);
@@ -151,6 +117,5 @@ function fillCardInfo(pinData) {
 
 window.data = {
   ads: adsData,
-  locatePins,
   fillCardInfo
 };

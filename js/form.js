@@ -1,11 +1,11 @@
 'use strict';
 
-const VALUE_FOR_MANY_ROOMS = 100;
 const VALUE_FOR_NOT_GUESTS = 0;
+const VALUE_FOR_MANY_ROOMS = 100;
 
 const adFormForm = document.querySelector(`.ad-form`);
-const roomNumber = document.querySelector(`#room_number`);
-const capacityNumber = document.querySelector(`#capacity`);
+const roomNumber = adFormForm.querySelector(`#room_number`);
+const capacityNumber = adFormForm.querySelector(`#capacity`);
 
 function checkRoomsAndPlaces(evt) {
   const rooms = +roomNumber.value;
