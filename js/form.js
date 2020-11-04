@@ -6,6 +6,16 @@ const VALUE_FOR_MANY_ROOMS = 100;
 const adFormForm = document.querySelector(`.ad-form`);
 const roomNumber = adFormForm.querySelector(`#room_number`);
 const capacityNumber = adFormForm.querySelector(`#capacity`);
+const checkin = adFormForm.querySelector(`#timein`);
+const checkout = adFormForm.querySelector(`#timeout`);
+const type = adFormForm.querySelector(`#type`);
+const price = adFormForm.querySelector(`#price`);
+const typeRestricts = {
+  bungalow: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
 
 function checkRoomsAndPlaces(evt) {
   const rooms = +roomNumber.value;
@@ -29,3 +39,22 @@ function checkRoomsAndPlaces(evt) {
 roomNumber.addEventListener(`change`, checkRoomsAndPlaces);
 capacityNumber.addEventListener(`change`, checkRoomsAndPlaces);
 adFormForm.addEventListener(`submit`, checkRoomsAndPlaces);
+
+function onTimeinChange() {
+  checkout.querySelector(`option[value="${checkin.value}"]`).selected = true;
+}
+
+function onTimeoutChange() {
+  checkin.querySelector(`option[value="${checkout.value}"]`).selected = true;
+}
+
+checkin.addEventListener(`change`, onTimeinChange);
+checkout.addEventListener(`change`, onTimeoutChange);
+
+function onTypeChange() {
+  const min = typeRestricts[type.value];
+  price.min = min;
+  price.placeholder = min;
+}
+
+type.addEventListener(`change`, onTypeChange);
