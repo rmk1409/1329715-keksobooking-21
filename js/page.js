@@ -82,12 +82,19 @@ function pageInactivation() {
   setAddressField();
 }
 
-function locateData() {
-  const pinsData = window.data.ads;
-  const info = window.data.fillCardInfo(pinsData[0]);
+function locateCardInfo(pinData = window.data.ads[0]) {
+  const info = window.data.fillCardInfo(pinData);
 
-  locatePins(pinsData);
+  info.querySelector(`.popup__close`).addEventListener(`click`, function () {
+    closeCardInfo();
+  });
+
   mapFiltersContainer.insertAdjacentElement(`beforebegin`, info);
+}
+
+function locateData() {
+  locatePins();
+  locateCardInfo();
 }
 
 function pageActivation() {
@@ -123,8 +130,9 @@ function setupPin(pinData) {
   return pin;
 }
 
-function locatePins(pinsData) {
+function locatePins() {
   const fragment = document.createDocumentFragment();
+  const pinsData = window.data.ads;
 
   for (let i = 0; i < pinsData.length; i++) {
     const pin = setupPin(pinsData[i]);
@@ -132,7 +140,38 @@ function locatePins(pinsData) {
   }
 
   mapPins.appendChild(fragment);
+
+  mapPins.addEventListener(`click`, function (evt) {
+    const closest = evt.target.closest(`.map__pin[type=button]`);
+    if (closest) {
+      closeCardInfo();
+      locateCardInfo(window.data.ads[closest.dataset.id]);
+    }
+  });
+
+  mapPins.addEventListener(`keydown`, function (evt) {
+    const closest = evt.target.closest(`.map__pin[type=button]`);
+    if (evt.key === `Enter` && closest) {
+      closeCardInfo();
+      locateCardInfo(window.data.ads[closest.dataset.id]);
+    }
+  });
 }
+
+function closeCardInfo() {
+  const cardInfo = map.querySelector(`.map__card`);
+  if (cardInfo) {
+    cardInfo.remove();
+  }
+}
+
+function onDocumentEscapeKeydown(evt) {
+  if (evt.key === `Escape`) {
+    closeCardInfo();
+  }
+}
+
+document.addEventListener(`keydown`, onDocumentEscapeKeydown);
 
 pageInactivation();
 address.disabled = true;
