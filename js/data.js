@@ -36,8 +36,8 @@
     for (let i = 0; i < AD_COUNT; i++) {
       const number = i + 1;
 
-      const x = window.generateRandom(grid.minX, grid.maxX);
-      const y = window.generateRandom(grid.minY, grid.maxY);
+      const x = window.util.generateRandom(grid.minX, grid.maxX);
+      const y = window.util.generateRandom(grid.minY, grid.maxY);
       const types = Object.keys(APARTMENT_TYPES);
       const curAd = {
         id: i,
@@ -47,15 +47,15 @@
         offer: {
           title: `some-header0${number}`,
           address: `${x}, ${y}`,
-          price: window.generateRandom(1000, 10000),
-          type: types[window.generateRandom(0, types.length)],
-          rooms: window.generateRandom(MIN_ROOM_COUNT, MAX_ROOM_COUNT),
-          guests: window.generateRandom(MIN_GUEST_COUNT, MAX_GUEST_COUNT),
-          checkin: TIMES[window.generateRandom(0, TIMES.length)],
-          checkout: TIMES[window.generateRandom(0, TIMES.length)],
-          features: FEATURES.slice(0, window.generateRandom(MIN_FEATURE_COUNT, FEATURES.length + 1)),
+          price: window.util.generateRandom(1000, 10000),
+          type: types[window.util.generateRandom(0, types.length)],
+          rooms: window.util.generateRandom(MIN_ROOM_COUNT, MAX_ROOM_COUNT),
+          guests: window.util.generateRandom(MIN_GUEST_COUNT, MAX_GUEST_COUNT),
+          checkin: TIMES[window.util.generateRandom(0, TIMES.length)],
+          checkout: TIMES[window.util.generateRandom(0, TIMES.length)],
+          features: FEATURES.slice(0, window.util.generateRandom(MIN_FEATURE_COUNT, FEATURES.length + 1)),
           description: `description of 0${number}`,
-          photos: PHOTOS.slice(0, window.generateRandom(MIN_PHOTO_COUNT, PHOTOS.length + 1))
+          photos: PHOTOS.slice(0, window.util.generateRandom(MIN_PHOTO_COUNT, PHOTOS.length + 1))
         },
         location: {
           x,

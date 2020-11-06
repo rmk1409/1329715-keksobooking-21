@@ -63,17 +63,55 @@
     }
   }
 
+  function onDocumentMove(moveEvt) {
+    const leftValue = window.util.getNumberValueFromStrPX(mainPin.style.left);
+    const topValue = window.util.getNumberValueFromStrPX(mainPin.style.top);
+
+    let newLeft = leftValue + moveEvt.movementX;
+    if (newLeft < 250) {
+      newLeft = 250;
+    } else if (newLeft > 1140) {
+      newLeft = 1140;
+    }
+
+    mainPin.style.left = `${newLeft}px`;
+    let newTop = topValue + moveEvt.movementY;
+    if (newTop < 130) {
+      newTop = 130;
+    } else if (newTop > 630) {
+      newTop = 630;
+    }
+    mainPin.style.top = `${newTop}px`;
+
+    window.form.setAddressField();
+  }
+
+  function onMainPinClickMoveListener() {
+    document.addEventListener(`mousemove`, onDocumentMove);
+    document.addEventListener(`mouseup`, onDocumentMouseup);
+  }
+
+  function onDocumentMouseup() {
+    document.removeEventListener(`mousemove`, onDocumentMove);
+    document.removeEventListener(`mouseup`, onDocumentMouseup);
+  }
+
   function onMainPinAddListeners() {
     mainPin.addEventListener(`mousedown`, onMainPinClick);
     mainPin.addEventListener(`keydown`, onMainPinEnterClick);
+
+    mainPin.removeEventListener(`mousedown`, onMainPinClickMoveListener);
   }
 
   function onMainPinRemoveListeners() {
     mainPin.removeEventListener(`mousedown`, onMainPinClick);
     mainPin.removeEventListener(`keydown`, onMainPinEnterClick);
+
+    mainPin.addEventListener(`mousedown`, onMainPinClickMoveListener);
   }
 
   window.pin = {
+    main: mainPin,
     locateData: locatePins,
     onMainPinAddListeners,
     onMainPinRemoveListeners

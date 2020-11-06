@@ -12,19 +12,17 @@
   };
 
   const mainPinData = {
-    defaultTop: 375,
-    defaultLeft: 570,
     width: 62,
     height: 62,
     heightWithPin: 84,
     getInactiveY() {
-      return this.defaultTop + this.height / 2;
+      return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.height / 2;
     },
     getActiveY() {
-      return this.defaultTop + this.heightWithPin / 2;
+      return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.heightWithPin / 2;
     },
     getX() {
-      return this.defaultLeft + this.width / 2;
+      return window.util.getNumberValueFromStrPX(window.pin.main.style.left) + this.width / 2;
     }
   };
 
@@ -90,7 +88,7 @@
   }
 
   function setAddressField() {
-    const y = window.page.isActive ? mainPinData.getActiveY() : mainPinData.getInactiveY();
+    const y = window.page.isActive() ? mainPinData.getActiveY() : mainPinData.getInactiveY();
     const x = mainPinData.getX();
 
     address.value = `${x}, ${y}`;
@@ -120,6 +118,7 @@
 
   window.form = {
     activation,
-    deactivation
+    deactivation,
+    setAddressField
   };
 })();

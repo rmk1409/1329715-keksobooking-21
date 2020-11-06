@@ -1,19 +1,23 @@
 'use strict';
 
-let isPageActive = false;
+let activeFlag = false;
 
 function pageActivation() {
-  isPageActive = true;
+  activeFlag = true;
   window.pin.onMainPinRemoveListeners();
   window.map.activation();
   window.form.activation();
 }
 
 function pageDeactivation() {
-  isPageActive = false;
+  activeFlag = false;
   window.pin.onMainPinAddListeners();
   window.form.deactivation();
   window.map.deactivation();
+}
+
+function isPageActive() {
+  return activeFlag;
 }
 
 window.page = {
