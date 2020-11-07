@@ -4,6 +4,8 @@
   const MAIN_BUTTON_CODE = 0;
   const SHOWN_PINS_MAX_COUNT = 5;
 
+  const DEBOUNCE_INTERVAL = 500;
+
   const SHIFT_PIN_X = 25;
   const SHIFT_PIN_Y = 70;
 
@@ -11,8 +13,14 @@
   const mapPins = map.querySelector(`.map__pins`);
   const mainPin = document.querySelector(`.map__pin--main`);
   const type = document.querySelector(`#housing-type`);
+  const price = document.querySelector(`#housing-price`);
+  const roomCount = document.querySelector(`#housing-rooms`);
+  const guestCount = document.querySelector(`#housing-guests`);
+  const housingFeatures = document.querySelector(`#housing-features`);
 
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
+
+  let timeout;
 
   function setupPin(pinData) {
     const pin = pinTemplate.cloneNode(true);
@@ -35,6 +43,42 @@
     const typeValue = type.value;
     if (typeValue !== `any`) {
       sortedData = sortedData.filter((e) => e.offer.type === typeValue);
+    }
+
+    const priceValue = price.value;
+    if (priceValue !== `any`) {
+      sortedData = sortedData.filter((e) => {
+        const predicate = {
+          middle: (elementPrice) => {
+            return elementPrice >= 10000 && elementPrice < 50000;
+          },
+          low: (elementPrice) => {
+            return elementPrice < 10000;
+          },
+          high: (elementPrice) => {
+            return elementPrice >= 50000;
+          }
+        };
+        return predicate[priceValue](e.offer.price);
+      });
+    }
+
+    const roomCountValue = roomCount.value;
+    if (roomCountValue !== `any`) {
+      sortedData = sortedData.filter((e) => e.offer.rooms === +roomCountValue);
+    }
+
+    const guestsValue = guestCount.value;
+    if (guestsValue !== `any`) {
+      sortedData = sortedData.filter((e) => e.offer.guests === +guestsValue);
+    }
+
+    const checkboxes = Array.from(housingFeatures.querySelectorAll(`.map__checkbox`));
+    const checkedCheckboxes = checkboxes.filter((e) => e.checked).map((e) => e.value);
+    if (checkedCheckboxes.length > 0) {
+      sortedData = sortedData.filter((ad) => {
+        return checkedCheckboxes.every((checked) => ad.offer.features.indexOf(checked) !== -1);
+      });
     }
 
     return sortedData;
@@ -139,11 +183,20 @@
     mainPin.addEventListener(`mousedown`, onMainPinClickMoveListener);
   }
 
-  function onFilterChange() {
-    locatePins();
+  function debounce(cb) {
+    if (timeout) {
+      window.clearTimeout(timeout);
+    }
+    timeout = setTimeout(function () {
+      cb();
+    }, DEBOUNCE_INTERVAL);
   }
 
-  type.addEventListener(`change`, onFilterChange);
+  type.addEventListener(`change`, () => debounce(locatePins));
+  price.addEventListener(`change`, () => debounce(locatePins));
+  roomCount.addEventListener(`change`, () => debounce(locatePins));
+  guestCount.addEventListener(`change`, () => debounce(locatePins));
+  housingFeatures.addEventListener(`change`, () => debounce(locatePins));
 
   window.pin = {
     main: mainPin,
