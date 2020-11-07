@@ -4,8 +4,8 @@
   const map = document.querySelector(`.map`);
   const mapFilters = map.querySelector(`.map__filters`);
 
-  function locateData() {
-    window.pin.locateData();
+  function locateData(pinData) {
+    window.pin.locateData(pinData);
     window.card.locateData();
   }
 
@@ -25,7 +25,7 @@
       child.disabled = false;
     }
 
-    locateData();
+    window.load.getData(locateData, window.load.errorMsg);
   }
 
   function deactivation() {

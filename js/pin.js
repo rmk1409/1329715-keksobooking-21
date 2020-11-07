@@ -12,11 +12,11 @@
 
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
-  function setupPin(pinData) {
+  function setupPin(id, pinData) {
     const pin = pinTemplate.cloneNode(true);
     const img = pin.querySelector(`img`);
 
-    pin.dataset.id = pinData.id;
+    pin.dataset.id = id;
     pin.style.left = `${pinData.location.x + SHIFT_PIN_X}px`;
     pin.style.top = `${pinData.location.y + SHIFT_PIN_Y}px`;
     img.src = pinData.author.avatar;
@@ -25,12 +25,12 @@
     return pin;
   }
 
-  function locatePins() {
+  function locatePins(pinsData) {
     const fragment = document.createDocumentFragment();
-    const pinsData = window.data.ads;
+    window.data.ads = pinsData;
 
     for (let i = 0; i < pinsData.length; i++) {
-      const pin = setupPin(pinsData[i]);
+      const pin = setupPin(i, pinsData[i]);
       fragment.appendChild(pin);
     }
 
