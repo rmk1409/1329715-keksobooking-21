@@ -75,6 +75,7 @@
   document.addEventListener(`keydown`, onDocumentEscapeKeydown);
 
   window.card = {
-    locateData: locateCardInfo
+    locateData: locateCardInfo,
+    close: closeCardInfo
   };
 })();

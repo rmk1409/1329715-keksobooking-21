@@ -5,7 +5,13 @@
   const mapFilters = map.querySelector(`.map__filters`);
 
   function locateData(pinData) {
-    window.pin.locateData(pinData);
+    if (!window.data.ads) {
+      window.data.ads = pinData;
+    }
+    for (let i = 0; i < pinData.length; i++) {
+      pinData[i].id = i;
+    }
+    window.pin.locateData();
     window.card.locateData();
   }
 
@@ -40,6 +46,7 @@
 
   window.map = {
     activation,
-    deactivation
+    deactivation,
+    removeData
   };
 })();
