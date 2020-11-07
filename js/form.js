@@ -34,10 +34,11 @@
   const type = adForm.querySelector(`#type`);
   const price = adForm.querySelector(`#price`);
   const address = adForm.querySelector(`#address`);
+  const resetButton = adForm.querySelector(`.ad-form__reset`);
 
   address.disabled = true;
 
-  function checkRoomsAndPlaces(evt) {
+  function isRoomsAndPlacesOkay(evt) {
     const rooms = +roomNumber.value;
     const places = +capacityNumber.value;
     let msg = ``;
@@ -53,6 +54,18 @@
     }
     roomNumber.setCustomValidity(msg);
     roomNumber.reportValidity();
+
+    return Boolean(!msg);
+  }
+
+  function onFormSubmit(evt) {
+    if (isRoomsAndPlacesOkay(evt)) {
+      evt.preventDefault();
+      const formData = new FormData(adForm);
+      formData.append(`address`, address.value);
+      window.ajax.sendData(window.page.onSuccess, window.page.onError, formData);
+      window.page.deactivation();
+    }
   }
 
   function onTimeinChange() {
@@ -70,21 +83,23 @@
   }
 
   function addListeners() {
-    roomNumber.addEventListener(`change`, checkRoomsAndPlaces);
-    capacityNumber.addEventListener(`change`, checkRoomsAndPlaces);
-    adForm.addEventListener(`submit`, checkRoomsAndPlaces);
+    roomNumber.addEventListener(`change`, isRoomsAndPlacesOkay);
+    capacityNumber.addEventListener(`change`, isRoomsAndPlacesOkay);
+    adForm.addEventListener(`submit`, onFormSubmit);
     checkin.addEventListener(`change`, onTimeinChange);
     checkout.addEventListener(`change`, onTimeoutChange);
     type.addEventListener(`change`, onTypeChange);
+    resetButton.addEventListener(`click`, window.page.deactivation);
   }
 
   function removeListeners() {
-    roomNumber.removeEventListener(`change`, checkRoomsAndPlaces);
-    capacityNumber.removeEventListener(`change`, checkRoomsAndPlaces);
-    adForm.removeEventListener(`submit`, checkRoomsAndPlaces);
+    roomNumber.removeEventListener(`change`, isRoomsAndPlacesOkay);
+    capacityNumber.removeEventListener(`change`, isRoomsAndPlacesOkay);
+    adForm.removeEventListener(`submit`, onFormSubmit);
     checkin.removeEventListener(`change`, onTimeinChange);
     checkout.removeEventListener(`change`, onTimeoutChange);
     type.removeEventListener(`change`, onTypeChange);
+    resetButton.removeEventListener(`click`, window.page.deactivation);
   }
 
   function setAddressField() {
@@ -113,8 +128,10 @@
       fieldset.disabled = true;
     }
 
+    adForm.reset();
     setAddressField();
   }
+
 
   window.form = {
     activation,

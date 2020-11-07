@@ -6,10 +6,13 @@
   const TIMEOUT = 10000;
   const SUCCESS_STATUS_CODE = 200;
 
-  function getData(onSuccess, onError) {
+  function sendRequest(onSuccess, onError, method, data) {
     const req = new XMLHttpRequest();
-
-    req.open(`GET`, GET_DATA_URL);
+    if (method === `GET`) {
+      req.open(`GET`, GET_DATA_URL);
+    } else {
+      req.open(`POST`, POST_DATA_URL);
+    }
 
     req.addEventListener(`load`, function () {
       switch (req.status) {
@@ -32,10 +35,23 @@
 
     req.timeout = TIMEOUT;
     req.responseType = `json`;
-    req.send();
+    if (data) {
+      req.send(data);
+    } else {
+      req.send();
+    }
+  }
+
+  function getData(onSuccess, onError) {
+    sendRequest(onSuccess, onError, `GET`);
+  }
+
+  function sendData(onSuccess, onError, data) {
+    sendRequest(onSuccess, onError, `POST`, data);
   }
 
   window.ajax = {
-    getData
+    getData,
+    sendData
   };
 })();
