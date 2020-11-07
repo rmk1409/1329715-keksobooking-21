@@ -25,7 +25,7 @@
       child.disabled = false;
     }
 
-    window.load.getData(locateData, window.load.errorMsg);
+    window.ajax.getData(locateData, window.page.errorMsg);
   }
 
   function deactivation() {
