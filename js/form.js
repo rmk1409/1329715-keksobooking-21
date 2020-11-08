@@ -10,23 +10,6 @@ const typePriceRestricts = {
   palace: 10000
 };
 
-const mainPinData = {
-  defaultX: 570,
-  defaultY: 375,
-  width: 62,
-  height: 62,
-  heightWithPin: 84,
-  getInactiveY() {
-    return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.height / 2;
-  },
-  getActiveY() {
-    return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.heightWithPin / 2;
-  },
-  getX() {
-    return window.util.getNumberValueFromStrPX(window.pin.main.style.left) + this.width / 2;
-  }
-};
-
 const adForm = document.querySelector(`.ad-form`);
 const roomNumber = adForm.querySelector(`#room_number`);
 const capacityNumber = adForm.querySelector(`#capacity`);
@@ -130,31 +113,26 @@ function onImagesChange() {
 }
 
 function setAddressField() {
-  const y = window.page.isActive() ? mainPinData.getActiveY() : mainPinData.getInactiveY();
-  const x = mainPinData.getX();
-
+  const y = window.page.isActive() ? window.pin.mainData.getActiveY() : window.pin.mainData.getInactiveY();
+  const x = window.pin.mainData.getX();
   address.value = `${x}, ${y}`;
 }
 
 function activation() {
   adForm.classList.remove(`ad-form--disabled`);
   addListeners();
-
   for (let fieldset of adForm.children) {
     fieldset.disabled = false;
   }
-
   setAddressField();
 }
 
 function deactivation() {
   adForm.classList.add(`ad-form--disabled`);
   removeListeners();
-
   for (let fieldset of adForm.children) {
     fieldset.disabled = true;
   }
-
   adForm.reset();
   setAddressField();
 }
@@ -162,6 +140,5 @@ function deactivation() {
 window.form = {
   activation,
   deactivation,
-  setAddressField,
-  mainPinData
+  setAddressField
 };

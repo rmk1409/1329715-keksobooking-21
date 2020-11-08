@@ -7,6 +7,8 @@ const SUCCESS_STATUS_CODE = 200;
 
 function sendRequest(onSuccess, onError, method, data) {
   const req = new XMLHttpRequest();
+  req.timeout = TIMEOUT;
+  req.responseType = `json`;
   if (method === `GET`) {
     req.open(`GET`, GET_DATA_URL);
   } else {
@@ -23,17 +25,13 @@ function sendRequest(onSuccess, onError, method, data) {
         break;
     }
   });
-
   req.addEventListener(`error`, function () {
     onError(`Connection error`);
   });
-
   req.addEventListener(`timeout`, function () {
     onError(`Timout error`);
   });
 
-  req.timeout = TIMEOUT;
-  req.responseType = `json`;
   if (data) {
     req.send(data);
   } else {

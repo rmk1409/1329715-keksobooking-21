@@ -13,9 +13,7 @@ function addPhotos(pinData) {
 
   for (let photoSrc of pinData.offer.photos) {
     const photo = photoTemplate.cloneNode(true);
-
     photo.src = photoSrc;
-
     fragment.appendChild(photo);
   }
   photoTemplate.remove();
@@ -24,9 +22,9 @@ function addPhotos(pinData) {
 
 function addFeatures(pinData) {
   const popupFeatures = cardInfo.querySelector(`.popup__features`);
-  const copyChildren = [...popupFeatures.children];
+  const featuresCopy = [...popupFeatures.children];
 
-  for (let feature of copyChildren) {
+  for (let feature of featuresCopy) {
     const modifier = feature.classList[1].split(`--`)[1];
 
     if (pinData.offer.features.indexOf(modifier) === -1) {
@@ -53,16 +51,19 @@ function fillCardInfo(pinData) {
 function closeCardInfo() {
   if (cardInfo) {
     cardInfo.remove();
+    document.removeEventListener(`keydown`, onDocumentEscapeKeydown);
   }
 }
 
 function locateCardInfo(pinData = window.data.ads[0]) {
   closeCardInfo();
   fillCardInfo(pinData);
+  mapFiltersContainer.insertAdjacentElement(`beforebegin`, cardInfo);
+
   cardInfo.querySelector(`.popup__close`).addEventListener(`click`, function () {
     closeCardInfo();
   });
-  mapFiltersContainer.insertAdjacentElement(`beforebegin`, cardInfo);
+  document.addEventListener(`keydown`, onDocumentEscapeKeydown);
 }
 
 function onDocumentEscapeKeydown(evt) {
@@ -70,8 +71,6 @@ function onDocumentEscapeKeydown(evt) {
     closeCardInfo();
   }
 }
-
-document.addEventListener(`keydown`, onDocumentEscapeKeydown);
 
 window.card = {
   locateData: locateCardInfo,

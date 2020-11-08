@@ -25,21 +25,21 @@ function removeData() {
 
 function activation() {
   map.classList.remove(`map--faded`);
-
   for (let child of mapFilters.children) {
     child.disabled = false;
   }
-
-  window.ajax.getData(locateData, window.page.errorMsg);
+  if (!window.data.ads) {
+    window.ajax.getData(locateData, window.page.errorMsg);
+  } else {
+    locateData(window.data.ads);
+  }
 }
 
 function deactivation() {
   map.classList.add(`map--faded`);
-
   for (let child of mapFilters.children) {
     child.disabled = true;
   }
-
   removeData();
 }
 

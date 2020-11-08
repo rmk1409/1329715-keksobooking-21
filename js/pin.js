@@ -5,17 +5,31 @@ const SHOWN_PINS_MAX_COUNT = 5;
 
 const DEBOUNCE_INTERVAL = 500;
 
-const SHIFT_PIN_X = 25;
-const SHIFT_PIN_Y = 70;
+const mainPinData = {
+  defaultX: 570,
+  defaultY: 375,
+  width: 62,
+  height: 62,
+  heightWithPin: 84,
+  getInactiveY() {
+    return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.height / 2;
+  },
+  getActiveY() {
+    return window.util.getNumberValueFromStrPX(window.pin.main.style.top) + this.heightWithPin / 2;
+  },
+  getX() {
+    return window.util.getNumberValueFromStrPX(window.pin.main.style.left) + this.width / 2;
+  }
+};
 
 const map = document.querySelector(`.map`);
 const mapPins = map.querySelector(`.map__pins`);
-const mainPin = document.querySelector(`.map__pin--main`);
-const type = document.querySelector(`#housing-type`);
-const price = document.querySelector(`#housing-price`);
-const roomCount = document.querySelector(`#housing-rooms`);
-const guestCount = document.querySelector(`#housing-guests`);
-const housingFeatures = document.querySelector(`#housing-features`);
+const mainPin = map.querySelector(`.map__pin--main`);
+const type = map.querySelector(`#housing-type`);
+const price = map.querySelector(`#housing-price`);
+const roomCount = map.querySelector(`#housing-rooms`);
+const guestCount = map.querySelector(`#housing-guests`);
+const housingFeatures = map.querySelector(`#housing-features`);
 
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
@@ -28,8 +42,8 @@ function setupPin(pinData) {
   if (!pin.dataset.id) {
     pin.dataset.id = pinData.id;
   }
-  pin.style.left = `${pinData.location.x + SHIFT_PIN_X}px`;
-  pin.style.top = `${pinData.location.y + SHIFT_PIN_Y}px`;
+  pin.style.left = `${pinData.location.x}px`;
+  pin.style.top = `${pinData.location.y}px`;
   img.src = pinData.author.avatar;
   img.alt = pinData.offer.title;
 
@@ -191,21 +205,34 @@ function debounce(cb) {
   }, DEBOUNCE_INTERVAL);
 }
 
-function setMainPin() {
-  mainPin.style.left = `${window.form.mainPinData.defaultX}px`;
-  mainPin.style.top = `${window.form.mainPinData.defaultY}px`;
+function setMainPinToDefaultState() {
+  mainPin.style.left = `${window.pin.mainData.defaultX}px`;
+  mainPin.style.top = `${window.pin.mainData.defaultY}px`;
 }
 
-type.addEventListener(`change`, () => debounce(locatePins));
-price.addEventListener(`change`, () => debounce(locatePins));
-roomCount.addEventListener(`change`, () => debounce(locatePins));
-guestCount.addEventListener(`change`, () => debounce(locatePins));
-housingFeatures.addEventListener(`change`, () => debounce(locatePins));
+function activation() {
+  onMainPinRemoveListeners();
+  type.addEventListener(`change`, () => debounce(locatePins));
+  price.addEventListener(`change`, () => debounce(locatePins));
+  roomCount.addEventListener(`change`, () => debounce(locatePins));
+  guestCount.addEventListener(`change`, () => debounce(locatePins));
+  housingFeatures.addEventListener(`change`, () => debounce(locatePins));
+}
+
+function deactivation() {
+  onMainPinAddListeners();
+  type.removeEventListener(`change`, () => debounce(locatePins));
+  price.removeEventListener(`change`, () => debounce(locatePins));
+  roomCount.removeEventListener(`change`, () => debounce(locatePins));
+  guestCount.removeEventListener(`change`, () => debounce(locatePins));
+  housingFeatures.removeEventListener(`change`, () => debounce(locatePins));
+  setMainPinToDefaultState();
+}
 
 window.pin = {
   main: mainPin,
-  locateData: locatePins,
-  onMainPinAddListeners,
-  onMainPinRemoveListeners,
-  setMainPin
+  mainData: mainPinData,
+  activation,
+  deactivation,
+  locateData: locatePins
 };

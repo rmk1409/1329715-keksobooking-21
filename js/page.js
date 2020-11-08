@@ -1,20 +1,20 @@
 'use strict';
 
-let activeFlag = false;
 const successTemplate = document.querySelector(`#success`).content;
 const errorTemplate = document.querySelector(`#error`).content;
 
+let activeFlag = false;
+
 function pageActivation() {
   activeFlag = true;
-  window.pin.onMainPinRemoveListeners();
+  window.pin.activation();
   window.map.activation();
   window.form.activation();
 }
 
 function pageDeactivation() {
   activeFlag = false;
-  window.pin.onMainPinAddListeners();
-  window.pin.setMainPin();
+  window.pin.deactivation();
   window.map.deactivation();
   window.form.deactivation();
 }
