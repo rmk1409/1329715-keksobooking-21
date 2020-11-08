@@ -11,6 +11,8 @@ const typePriceRestricts = {
 };
 
 const mainPinData = {
+  defaultX: 570,
+  defaultY: 375,
   width: 62,
   height: 62,
   heightWithPin: 84,
@@ -160,5 +162,6 @@ function deactivation() {
 window.form = {
   activation,
   deactivation,
-  setAddressField
+  setAddressField,
+  mainPinData
 };

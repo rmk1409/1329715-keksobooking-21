@@ -14,8 +14,9 @@ function pageActivation() {
 function pageDeactivation() {
   activeFlag = false;
   window.pin.onMainPinAddListeners();
-  window.form.deactivation();
+  window.pin.setMainPin();
   window.map.deactivation();
+  window.form.deactivation();
 }
 
 function isPageActive() {

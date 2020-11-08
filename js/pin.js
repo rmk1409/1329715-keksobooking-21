@@ -191,6 +191,11 @@ function debounce(cb) {
   }, DEBOUNCE_INTERVAL);
 }
 
+function setMainPin() {
+  mainPin.style.left = `${window.form.mainPinData.defaultX}px`;
+  mainPin.style.top = `${window.form.mainPinData.defaultY}px`;
+}
+
 type.addEventListener(`change`, () => debounce(locatePins));
 price.addEventListener(`change`, () => debounce(locatePins));
 roomCount.addEventListener(`change`, () => debounce(locatePins));
@@ -201,5 +206,6 @@ window.pin = {
   main: mainPin,
   locateData: locatePins,
   onMainPinAddListeners,
-  onMainPinRemoveListeners
+  onMainPinRemoveListeners,
+  setMainPin
 };
