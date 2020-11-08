@@ -34,6 +34,10 @@ const type = adForm.querySelector(`#type`);
 const price = adForm.querySelector(`#price`);
 const address = adForm.querySelector(`#address`);
 const resetButton = adForm.querySelector(`.ad-form__reset`);
+const avatar = adForm.querySelector(`#avatar`);
+const avatarPreview = adForm.querySelector(`.ad-form-header__preview img`);
+const image = adForm.querySelector(`#images`);
+const imgPreview = adForm.querySelector(`.ad-form__photo`);
 
 address.disabled = true;
 
@@ -89,6 +93,8 @@ function addListeners() {
   checkout.addEventListener(`change`, onTimeoutChange);
   type.addEventListener(`change`, onTypeChange);
   resetButton.addEventListener(`click`, window.page.deactivation);
+  avatar.addEventListener(`change`, onAvatarChange);
+  image.addEventListener(`change`, onImagesChange);
 }
 
 function removeListeners() {
@@ -99,6 +105,26 @@ function removeListeners() {
   checkout.removeEventListener(`change`, onTimeoutChange);
   type.removeEventListener(`change`, onTypeChange);
   resetButton.removeEventListener(`click`, window.page.deactivation);
+  avatar.removeEventListener(`change`, onAvatarChange);
+  image.removeEventListener(`change`, onImagesChange);
+}
+
+function onAvatarChange() {
+  const reader = new FileReader();
+  reader.addEventListener(`load`, function () {
+    avatarPreview.src = reader.result;
+  });
+  reader.readAsDataURL(avatar.files[0]);
+}
+
+function onImagesChange() {
+  const reader = new FileReader();
+  reader.addEventListener(`load`, function () {
+    imgPreview.style.backgroundImage = `url(${reader.result})`;
+    imgPreview.style.backgroundSize = `cover`;
+    imgPreview.style.backgroundPosition = `center`;
+  });
+  reader.readAsDataURL(image.files[0]);
 }
 
 function setAddressField() {
@@ -130,7 +156,6 @@ function deactivation() {
   adForm.reset();
   setAddressField();
 }
-
 
 window.form = {
   activation,
