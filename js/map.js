@@ -11,7 +11,6 @@ function locateData(pinData) {
     pinData[i].id = i;
   }
   window.pin.locateData();
-  window.card.locateData();
 }
 
 function removeData() {
@@ -19,7 +18,7 @@ function removeData() {
   if (info) {
     info.remove();
   }
-  document.querySelectorAll(`.map__pin[type=button]`)
+  document.querySelectorAll(`.map__pin:not(.map__pin--main)`)
     .forEach((el) => el.remove());
 }
 
@@ -41,9 +40,11 @@ function deactivation() {
     child.disabled = true;
   }
   removeData();
+  mapFilters.reset();
 }
 
 window.map = {
+  domElement: map,
   activation,
   deactivation,
   removeData

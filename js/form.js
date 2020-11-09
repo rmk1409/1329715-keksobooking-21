@@ -24,7 +24,7 @@ const avatarPreview = adForm.querySelector(`.ad-form-header__preview img`);
 const image = adForm.querySelector(`#images`);
 const imgPreview = adForm.querySelector(`.ad-form__photo`);
 
-address.disabled = true;
+address.readOnly = true;
 
 function isRoomsAndPlacesOkay(evt) {
   const rooms = +roomNumber.value;
@@ -49,9 +49,7 @@ function isRoomsAndPlacesOkay(evt) {
 function onFormSubmit(evt) {
   if (isRoomsAndPlacesOkay(evt)) {
     evt.preventDefault();
-    const formData = new FormData(adForm);
-    formData.append(`address`, address.value);
-    window.ajax.sendData(window.page.onSuccess, window.page.onError, formData);
+    window.ajax.sendData(window.page.onSuccess, window.page.onError, new FormData(adForm));
     window.page.deactivation();
   }
 }
@@ -77,21 +75,22 @@ function addListeners() {
   checkin.addEventListener(`change`, onTimeinChange);
   checkout.addEventListener(`change`, onTimeoutChange);
   type.addEventListener(`change`, onTypeChange);
-  resetButton.addEventListener(`click`, window.page.deactivation);
+  resetButton.addEventListener(`click`, onResetButtonClick);
   avatar.addEventListener(`change`, onAvatarChange);
   image.addEventListener(`change`, onImagesChange);
 }
 
-function removeListeners() {
-  roomNumber.removeEventListener(`change`, isRoomsAndPlacesOkay);
-  capacityNumber.removeEventListener(`change`, isRoomsAndPlacesOkay);
-  adForm.removeEventListener(`submit`, onFormSubmit);
-  checkin.removeEventListener(`change`, onTimeinChange);
-  checkout.removeEventListener(`change`, onTimeoutChange);
-  type.removeEventListener(`change`, onTypeChange);
-  resetButton.removeEventListener(`click`, window.page.deactivation);
-  avatar.removeEventListener(`change`, onAvatarChange);
-  image.removeEventListener(`change`, onImagesChange);
+function onResetButtonClick() {
+  adForm.reset();
+  resetImagePreviews();
+  onTypeChange();
+  window.map.deactivation();
+  window.pin.setMainToDefaultState();
+  window.page.setFlag(false);
+
+  setTimeout(function () {
+    setAddressField();
+  }, 0);
 }
 
 function onAvatarChange() {
@@ -120,22 +119,28 @@ function setAddressField() {
 
 function activation() {
   adForm.classList.remove(`ad-form--disabled`);
-  addListeners();
   for (let fieldset of adForm.children) {
     fieldset.disabled = false;
   }
   setAddressField();
 }
 
+function resetImagePreviews() {
+  avatarPreview.src = `img/muffin-grey.svg`;
+  imgPreview.style.backgroundImage = ``;
+}
+
 function deactivation() {
   adForm.classList.add(`ad-form--disabled`);
-  removeListeners();
   for (let fieldset of adForm.children) {
     fieldset.disabled = true;
   }
   adForm.reset();
   setAddressField();
+  resetImagePreviews();
 }
+
+addListeners();
 
 window.form = {
   activation,
