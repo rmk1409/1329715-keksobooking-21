@@ -1,7 +1,6 @@
 'use strict';
 
-const map = document.querySelector(`.map`);
-const mapFiltersContainer = map.querySelector(`.map__filters-container`);
+const mapFiltersContainer = window.map.domElement.querySelector(`.map__filters-container`);
 
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 let cardInfo;

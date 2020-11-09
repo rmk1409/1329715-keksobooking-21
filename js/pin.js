@@ -3,7 +3,15 @@
 const MAIN_BUTTON_CODE = 0;
 const SHOWN_PINS_MAX_COUNT = 5;
 
-const DEBOUNCE_INTERVAL = 500;
+const MIN_LEFT_POSITION_VALUE = 0;
+const MAX_RIGHT_POSITION_VALUE = 1140;
+const MIN_TOP_POSITION_VALUE = 88;
+const MAX_TOP_POSITION_VALUE = 588;
+
+const ANY_VALUE = `any`;
+
+const FIRST_PRICE_LIMIT = 10000;
+const SECOND_PRICE_LIMIT = 50000;
 
 const mainPinData = {
   defaultX: 570,
@@ -22,18 +30,15 @@ const mainPinData = {
   }
 };
 
-const map = document.querySelector(`.map`);
-const mapPins = map.querySelector(`.map__pins`);
-const mainPin = map.querySelector(`.map__pin--main`);
-const type = map.querySelector(`#housing-type`);
-const price = map.querySelector(`#housing-price`);
-const roomCount = map.querySelector(`#housing-rooms`);
-const guestCount = map.querySelector(`#housing-guests`);
-const housingFeatures = map.querySelector(`#housing-features`);
+const mapPins = window.map.domElement.querySelector(`.map__pins`);
+const mainPin = window.map.domElement.querySelector(`.map__pin--main`);
+const type = window.map.domElement.querySelector(`#housing-type`);
+const price = window.map.domElement.querySelector(`#housing-price`);
+const roomCount = window.map.domElement.querySelector(`#housing-rooms`);
+const guestCount = window.map.domElement.querySelector(`#housing-guests`);
+const housingFeatures = window.map.domElement.querySelector(`#housing-features`);
 
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-
-let timeout;
 
 function setupPin(pinData) {
   const pin = pinTemplate.cloneNode(true);
@@ -54,22 +59,22 @@ function applyFiltering() {
   let sortedData = window.data.ads;
 
   const typeValue = type.value;
-  if (typeValue !== `any`) {
+  if (typeValue !== ANY_VALUE) {
     sortedData = sortedData.filter((e) => e.offer.type === typeValue);
   }
 
   const priceValue = price.value;
-  if (priceValue !== `any`) {
+  if (priceValue !== ANY_VALUE) {
     sortedData = sortedData.filter((e) => {
       const predicate = {
-        middle: (elementPrice) => {
-          return elementPrice >= 10000 && elementPrice < 50000;
-        },
         low: (elementPrice) => {
-          return elementPrice < 10000;
+          return elementPrice < FIRST_PRICE_LIMIT;
+        },
+        middle: (elementPrice) => {
+          return elementPrice >= FIRST_PRICE_LIMIT && elementPrice < SECOND_PRICE_LIMIT;
         },
         high: (elementPrice) => {
-          return elementPrice >= 50000;
+          return elementPrice >= SECOND_PRICE_LIMIT;
         }
       };
       return predicate[priceValue](e.offer.price);
@@ -77,20 +82,21 @@ function applyFiltering() {
   }
 
   const roomCountValue = roomCount.value;
-  if (roomCountValue !== `any`) {
+  if (roomCountValue !== ANY_VALUE) {
     sortedData = sortedData.filter((e) => e.offer.rooms === +roomCountValue);
   }
 
   const guestsValue = guestCount.value;
-  if (guestsValue !== `any`) {
+  if (guestsValue !== ANY_VALUE) {
     sortedData = sortedData.filter((e) => e.offer.guests === +guestsValue);
   }
 
-  const checkboxes = Array.from(housingFeatures.querySelectorAll(`.map__checkbox`));
-  const checkedCheckboxes = checkboxes.filter((e) => e.checked).map((e) => e.value);
-  if (checkedCheckboxes.length > 0) {
+  const checkboxes = Array.from(housingFeatures.querySelectorAll(`.map__checkbox:checked`))
+    .map((e) => e.value);
+
+  if (checkboxes.length > 0) {
     sortedData = sortedData.filter((ad) => {
-      return checkedCheckboxes.every((checked) => ad.offer.features.indexOf(checked) !== -1);
+      return checkboxes.every((checked) => ad.offer.features.indexOf(checked) !== -1);
     });
   }
 
@@ -111,19 +117,8 @@ function onMapPinsEnterClick(evt) {
   }
 }
 
-function addListenersToMapPins() {
-  mapPins.addEventListener(`click`, onMapPinsClick);
-  mapPins.addEventListener(`keydown`, onMapPinsEnterClick);
-}
-
-function removeListenersToMapPins() {
-  mapPins.removeEventListener(`click`, onMapPinsClick);
-  mapPins.removeEventListener(`keydown`, onMapPinsEnterClick);
-}
-
 function locatePins() {
   window.map.removeData();
-  removeListenersToMapPins();
 
   const pinsData = applyFiltering();
   const fragment = document.createDocumentFragment();
@@ -133,14 +128,20 @@ function locatePins() {
     fragment.appendChild(pin);
   }
   mapPins.appendChild(fragment);
-
-  addListenersToMapPins();
 }
 
 function onMainPinClick(evt) {
   if (evt.button === MAIN_BUTTON_CODE) {
     window.page.activation();
   }
+
+  document.addEventListener(`mousemove`, onDocumentMove);
+  document.addEventListener(`mouseup`, onDocumentMouseup);
+}
+
+function onDocumentMouseup() {
+  document.removeEventListener(`mousemove`, onDocumentMove);
+  document.removeEventListener(`mouseup`, onDocumentMouseup);
 }
 
 function onMainPinEnterClick(evt) {
@@ -154,55 +155,26 @@ function onDocumentMove(moveEvt) {
   const topValue = window.util.getNumberValueFromStrPX(mainPin.style.top);
 
   let newLeft = leftValue + moveEvt.movementX;
-  if (newLeft < 250) {
-    newLeft = 250;
-  } else if (newLeft > 1140) {
-    newLeft = 1140;
+  if (newLeft < MIN_LEFT_POSITION_VALUE) {
+    newLeft = MIN_LEFT_POSITION_VALUE;
+  } else {
+    if (newLeft > MAX_RIGHT_POSITION_VALUE) {
+      newLeft = MAX_RIGHT_POSITION_VALUE;
+    }
   }
-
   mainPin.style.left = `${newLeft}px`;
+
   let newTop = topValue + moveEvt.movementY;
-  if (newTop < 130) {
-    newTop = 130;
-  } else if (newTop > 630) {
-    newTop = 630;
+  if (newTop < MIN_TOP_POSITION_VALUE) {
+    newTop = MIN_TOP_POSITION_VALUE;
+  } else {
+    if (newTop > MAX_TOP_POSITION_VALUE) {
+      newTop = MAX_TOP_POSITION_VALUE;
+    }
   }
   mainPin.style.top = `${newTop}px`;
 
   window.form.setAddressField();
-}
-
-function onMainPinClickMoveListener() {
-  document.addEventListener(`mousemove`, onDocumentMove);
-  document.addEventListener(`mouseup`, onDocumentMouseup);
-}
-
-function onDocumentMouseup() {
-  document.removeEventListener(`mousemove`, onDocumentMove);
-  document.removeEventListener(`mouseup`, onDocumentMouseup);
-}
-
-function onMainPinAddListeners() {
-  mainPin.addEventListener(`mousedown`, onMainPinClick);
-  mainPin.addEventListener(`keydown`, onMainPinEnterClick);
-
-  mainPin.removeEventListener(`mousedown`, onMainPinClickMoveListener);
-}
-
-function onMainPinRemoveListeners() {
-  mainPin.removeEventListener(`mousedown`, onMainPinClick);
-  mainPin.removeEventListener(`keydown`, onMainPinEnterClick);
-
-  mainPin.addEventListener(`mousedown`, onMainPinClickMoveListener);
-}
-
-function debounce(cb) {
-  if (timeout) {
-    window.clearTimeout(timeout);
-  }
-  timeout = setTimeout(function () {
-    cb();
-  }, DEBOUNCE_INTERVAL);
 }
 
 function setMainPinToDefaultState() {
@@ -210,29 +182,25 @@ function setMainPinToDefaultState() {
   mainPin.style.top = `${window.pin.mainData.defaultY}px`;
 }
 
-function activation() {
-  onMainPinRemoveListeners();
-  type.addEventListener(`change`, () => debounce(locatePins));
-  price.addEventListener(`change`, () => debounce(locatePins));
-  roomCount.addEventListener(`change`, () => debounce(locatePins));
-  guestCount.addEventListener(`change`, () => debounce(locatePins));
-  housingFeatures.addEventListener(`change`, () => debounce(locatePins));
+function addListeners() {
+  mainPin.addEventListener(`mousedown`, onMainPinClick);
+  mainPin.addEventListener(`keydown`, onMainPinEnterClick);
+
+  mapPins.addEventListener(`click`, onMapPinsClick);
+  mapPins.addEventListener(`keydown`, onMapPinsEnterClick);
+
+  type.addEventListener(`change`, () => window.util.debounce(locatePins));
+  price.addEventListener(`change`, () => window.util.debounce(locatePins));
+  roomCount.addEventListener(`change`, () => window.util.debounce(locatePins));
+  guestCount.addEventListener(`change`, () => window.util.debounce(locatePins));
+  housingFeatures.addEventListener(`change`, () => window.util.debounce(locatePins));
 }
 
-function deactivation() {
-  onMainPinAddListeners();
-  type.removeEventListener(`change`, () => debounce(locatePins));
-  price.removeEventListener(`change`, () => debounce(locatePins));
-  roomCount.removeEventListener(`change`, () => debounce(locatePins));
-  guestCount.removeEventListener(`change`, () => debounce(locatePins));
-  housingFeatures.removeEventListener(`change`, () => debounce(locatePins));
-  setMainPinToDefaultState();
-}
+addListeners();
 
 window.pin = {
   main: mainPin,
   mainData: mainPinData,
-  activation,
-  deactivation,
+  setMainToDefaultState: setMainPinToDefaultState,
   locateData: locatePins
 };

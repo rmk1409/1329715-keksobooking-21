@@ -1,26 +1,34 @@
 'use strict';
 
-const successTemplate = document.querySelector(`#success`).content;
-const errorTemplate = document.querySelector(`#error`).content;
+const body = document.querySelector(`body`);
+const main = body.querySelector(`main`);
+
+const successTemplate = body.querySelector(`#success`).content;
+const errorTemplate = body.querySelector(`#error`).content;
 
 let activeFlag = false;
 
 function pageActivation() {
-  activeFlag = true;
-  window.pin.activation();
-  window.map.activation();
-  window.form.activation();
+  if (!activeFlag) {
+    activeFlag = true;
+    window.map.activation();
+    window.form.activation();
+  }
 }
 
 function pageDeactivation() {
   activeFlag = false;
-  window.pin.deactivation();
+  window.pin.setMainToDefaultState();
   window.map.deactivation();
   window.form.deactivation();
 }
 
 function isPageActive() {
   return activeFlag;
+}
+
+function setPageActive(newValue) {
+  activeFlag = newValue;
 }
 
 function errorMsg(msg) {
@@ -39,11 +47,11 @@ function errorMsg(msg) {
   errorMsgDiv.style.transform = `translate(-50%, -50%)`;
   errorMsgDiv.style.zIndex = `100`;
 
-  document.querySelector(`body`).appendChild(errorMsgDiv);
+  body.appendChild(errorMsgDiv);
 }
 
 function onSuccess() {
-  document.querySelector(`main`).appendChild(successTemplate.cloneNode(true));
+  main.appendChild(successTemplate.cloneNode(true));
 
   function msgSuccessWindowClose() {
     document.querySelector(`.success`).remove();
@@ -64,7 +72,7 @@ function onSuccess() {
 function onError() {
   const errorMsgDiv = errorTemplate.cloneNode(true);
   const errorButton = errorMsgDiv.querySelector(`.error__button`);
-  document.querySelector(`main`).appendChild(errorMsgDiv);
+  main.appendChild(errorMsgDiv);
 
   function msgErrorWindowClose() {
     document.querySelector(`.error`).remove();
@@ -90,5 +98,8 @@ window.page = {
   deactivation: pageDeactivation,
   errorMsg,
   onSuccess,
-  onError
+  onError,
+  setFlag: setPageActive
 };
+
+pageDeactivation();
