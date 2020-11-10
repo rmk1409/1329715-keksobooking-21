@@ -38,7 +38,7 @@ function fillCardInfo(pinData) {
   cardInfo.querySelector(`.popup__title`).textContent = pinData.offer.title;
   cardInfo.querySelector(`.popup__text--address`).textContent = pinData.offer.address;
   cardInfo.querySelector(`.popup__text--price`).textContent = `${pinData.offer.price}₽/ночь`;
-  cardInfo.querySelector(`.popup__type`).textContent = window.data.types[pinData.offer.type];
+  cardInfo.querySelector(`.popup__type`).textContent = window.data.types[pinData.offer.type.toUpperCase()];
   cardInfo.querySelector(`.popup__text--capacity`).textContent = `${pinData.offer.rooms} комнаты для ${pinData.offer.guests} гостей`;
   cardInfo.querySelector(`.popup__text--time`).textContent = `Заезд после ${pinData.offer.checkin}, выезд до ${pinData.offer.checkout}`;
   addFeatures(pinData);
@@ -59,9 +59,7 @@ function locateCardInfo(pinData = window.data.ads[0]) {
   fillCardInfo(pinData);
   mapFiltersContainer.insertAdjacentElement(`beforebegin`, cardInfo);
 
-  cardInfo.querySelector(`.popup__close`).addEventListener(`click`, function () {
-    closeCardInfo();
-  });
+  cardInfo.querySelector(`.popup__close`).addEventListener(`click`, closeCardInfo);
   document.addEventListener(`keydown`, onDocumentEscapeKeydown);
 }
 
