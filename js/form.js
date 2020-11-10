@@ -2,12 +2,13 @@
 
 const VALUE_FOR_NOT_GUESTS = 0;
 const VALUE_FOR_MANY_ROOMS = 100;
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`, `jfif`];
 
-const typePriceRestricts = {
-  bungalow: 0,
-  flat: 1000,
-  house: 5000,
-  palace: 10000
+const TypePriceRestricts = {
+  BUNGALOW: 0,
+  FLAT: 1000,
+  HOUSE: 5000,
+  PALACE: 10000
 };
 
 const adForm = document.querySelector(`.ad-form`);
@@ -63,7 +64,7 @@ function onTimeoutChange() {
 }
 
 function onTypeChange() {
-  const min = typePriceRestricts[type.value];
+  const min = TypePriceRestricts[type.value.toUpperCase()];
   price.min = min;
   price.placeholder = min;
 }
@@ -81,34 +82,36 @@ function addListeners() {
 }
 
 function onResetButtonClick() {
-  adForm.reset();
-  resetImagePreviews();
-  onTypeChange();
-  window.map.deactivation();
-  window.pin.setMainToDefaultState();
-  window.page.setFlag(false);
+  window.page.deactivation();
+}
 
-  setTimeout(function () {
-    setAddressField();
-  }, 0);
+function isImageFile(file) {
+  const fileName = file.name.toLowerCase();
+  return FILE_TYPES.some((it) => fileName.endsWith(it));
 }
 
 function onAvatarChange() {
-  const reader = new FileReader();
-  reader.addEventListener(`load`, function () {
-    avatarPreview.src = reader.result;
-  });
-  reader.readAsDataURL(avatar.files[0]);
+  const file = avatar.files[0];
+  if (isImageFile(file)) {
+    const reader = new FileReader();
+    reader.addEventListener(`load`, () => {
+      avatarPreview.src = reader.result;
+    });
+    reader.readAsDataURL(file);
+  }
 }
 
 function onImagesChange() {
-  const reader = new FileReader();
-  reader.addEventListener(`load`, function () {
-    imgPreview.style.backgroundImage = `url(${reader.result})`;
-    imgPreview.style.backgroundSize = `cover`;
-    imgPreview.style.backgroundPosition = `center`;
-  });
-  reader.readAsDataURL(image.files[0]);
+  const file = image.files[0];
+  if (isImageFile(file)) {
+    const reader = new FileReader();
+    reader.addEventListener(`load`, () => {
+      imgPreview.style.backgroundImage = `url(${reader.result})`;
+      imgPreview.style.backgroundSize = `cover`;
+      imgPreview.style.backgroundPosition = `center`;
+    });
+    reader.readAsDataURL(file);
+  }
 }
 
 function setAddressField() {
@@ -138,6 +141,7 @@ function deactivation() {
   adForm.reset();
   setAddressField();
   resetImagePreviews();
+  onTypeChange();
 }
 
 addListeners();

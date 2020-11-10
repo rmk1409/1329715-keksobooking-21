@@ -15,7 +15,7 @@ function sendRequest(onSuccess, onError, method, data) {
     req.open(`POST`, POST_DATA_URL);
   }
 
-  req.addEventListener(`load`, function () {
+  req.addEventListener(`load`, () => {
     switch (req.status) {
       case SUCCESS_STATUS_CODE:
         onSuccess(req.response);
@@ -25,12 +25,8 @@ function sendRequest(onSuccess, onError, method, data) {
         break;
     }
   });
-  req.addEventListener(`error`, function () {
-    onError(`Connection error`);
-  });
-  req.addEventListener(`timeout`, function () {
-    onError(`Timout error`);
-  });
+  req.addEventListener(`error`, () => onError(`Connection error`));
+  req.addEventListener(`timeout`, () => onError(`Timout error`));
 
   if (data) {
     req.send(data);

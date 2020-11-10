@@ -1,15 +1,15 @@
 'use strict';
 
-const APARTMENT_TYPES = {
-  palace: `Дворец`,
-  flat: `Квартира`,
-  house: `Дом`,
-  bungalow: `Бунгало`
+const ApartmentType = {
+  PALACE: `Дворец`,
+  FLAT: `Квартира`,
+  HOUSE: `Дом`,
+  BUNGALOW: `Бунгало`
 };
 
 let adsData;
 
 window.data = {
   ads: adsData,
-  types: APARTMENT_TYPES
+  types: ApartmentType
 };
