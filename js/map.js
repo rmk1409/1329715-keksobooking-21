@@ -3,7 +3,7 @@
 const map = document.querySelector(`.map`);
 const mapFilters = map.querySelector(`.map__filters`);
 
-function locateData(pinData) {
+const locateData = (pinData) => {
   if (!window.data.ads) {
     window.data.ads = pinData;
   }
@@ -11,18 +11,18 @@ function locateData(pinData) {
     pinData[i].id = i;
   }
   window.pin.locateData();
-}
+};
 
-function removeData() {
+const removeData = () => {
   const info = document.querySelector(`.map__card`);
   if (info) {
     info.remove();
   }
   document.querySelectorAll(`.map__pin:not(.map__pin--main)`)
     .forEach((el) => el.remove());
-}
+};
 
-function activation() {
+const activation = () => {
   map.classList.remove(`map--faded`);
   for (let child of mapFilters.children) {
     child.disabled = false;
@@ -32,16 +32,16 @@ function activation() {
   } else {
     locateData(window.data.ads);
   }
-}
+};
 
-function deactivation() {
+const deactivation = () => {
   map.classList.add(`map--faded`);
   for (let child of mapFilters.children) {
     child.disabled = true;
   }
   removeData();
   mapFilters.reset();
-}
+};
 
 window.map = {
   domElement: map,

@@ -5,7 +5,7 @@ const mapFiltersContainer = window.map.domElement.querySelector(`.map__filters-c
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 let cardInfo;
 
-function addPhotos(pinData) {
+const addPhotos = (pinData) => {
   const photos = cardInfo.querySelector(`.popup__photos`);
   const fragment = document.createDocumentFragment();
   const photoTemplate = photos.children[0];
@@ -17,9 +17,9 @@ function addPhotos(pinData) {
   }
   photoTemplate.remove();
   photos.appendChild(fragment);
-}
+};
 
-function addFeatures(pinData) {
+const addFeatures = (pinData) => {
   const popupFeatures = cardInfo.querySelector(`.popup__features`);
   const featuresCopy = [...popupFeatures.children];
 
@@ -30,9 +30,9 @@ function addFeatures(pinData) {
       popupFeatures.removeChild(feature);
     }
   }
-}
+};
 
-function fillCardInfo(pinData) {
+const fillCardInfo = (pinData) => {
   cardInfo = cardTemplate.cloneNode(true);
 
   cardInfo.querySelector(`.popup__title`).textContent = pinData.offer.title;
@@ -45,29 +45,29 @@ function fillCardInfo(pinData) {
   cardInfo.querySelector(`.popup__description`).textContent = pinData.offer.description;
   addPhotos(pinData);
   cardInfo.querySelector(`.popup__avatar`).src = pinData.author.avatar;
-}
+};
 
-function closeCardInfo() {
+const closeCardInfo = () => {
   if (cardInfo) {
     cardInfo.remove();
     document.removeEventListener(`keydown`, onDocumentEscapeKeydown);
   }
-}
+};
 
-function locateCardInfo(pinData = window.data.ads[0]) {
+const locateCardInfo = (pinData = window.data.ads[0]) => {
   closeCardInfo();
   fillCardInfo(pinData);
   mapFiltersContainer.insertAdjacentElement(`beforebegin`, cardInfo);
 
   cardInfo.querySelector(`.popup__close`).addEventListener(`click`, closeCardInfo);
   document.addEventListener(`keydown`, onDocumentEscapeKeydown);
-}
+};
 
-function onDocumentEscapeKeydown(evt) {
+const onDocumentEscapeKeydown = (evt) => {
   if (evt.key === `Escape`) {
     closeCardInfo();
   }
-}
+};
 
 window.card = {
   locateData: locateCardInfo,

@@ -4,22 +4,22 @@ const DEBOUNCE_INTERVAL = 500;
 
 let timeout;
 
-function generateRandom(min, max) {
+const generateRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 
-function getNumberValueFromStrPX(str) {
+const getNumberValueFromStrPX = (str) => {
   return +(str.substring(0, str.length - 2));
-}
+};
 
-function debounce(cb) {
+const debounce = (cb) => {
   if (timeout) {
     window.clearTimeout(timeout);
   }
-  timeout = setTimeout(function () {
+  timeout = setTimeout(() => {
     cb();
   }, DEBOUNCE_INTERVAL);
-}
+};
 
 window.util = {
   generateRandom,
