@@ -8,30 +8,30 @@ const errorTemplate = body.querySelector(`#error`).content;
 
 let activeFlag = false;
 
-function pageActivation() {
+const pageActivation = () => {
   if (!activeFlag) {
     activeFlag = true;
     window.map.activation();
     window.form.activation();
   }
-}
+};
 
-function pageDeactivation() {
+const pageDeactivation = () => {
   activeFlag = false;
   window.pin.setMainToDefaultState();
   window.map.deactivation();
   window.form.deactivation();
-}
+};
 
-function isPageActive() {
+const isPageActive = () => {
   return activeFlag;
-}
+};
 
-function setPageActive(newValue) {
+const setPageActive = (newValue) => {
   activeFlag = newValue;
-}
+};
 
-function errorMsg(msg) {
+const errorMsg = (msg) => {
   const errorMsgDiv = document.createElement(`div`);
 
   errorMsgDiv.append(msg);
@@ -48,49 +48,49 @@ function errorMsg(msg) {
   errorMsgDiv.style.zIndex = `100`;
 
   body.appendChild(errorMsgDiv);
-}
+};
 
-function onSuccess() {
+const onSuccess = () => {
   main.appendChild(successTemplate.cloneNode(true));
 
-  function msgSuccessWindowClose() {
+  const msgSuccessWindowClose = () => {
     document.querySelector(`.success`).remove();
     document.removeEventListener(`click`, msgSuccessWindowClose);
     document.removeEventListener(`keydown`, onEscKeydownClick);
-  }
+  };
 
-  function onEscKeydownClick(evt) {
+  const onEscKeydownClick = (evt) => {
     if (evt.key === `Escape`) {
       msgSuccessWindowClose();
     }
-  }
+  };
 
   document.addEventListener(`click`, msgSuccessWindowClose);
   document.addEventListener(`keydown`, onEscKeydownClick);
-}
+};
 
-function onError() {
+const onError = () => {
   const errorMsgDiv = errorTemplate.cloneNode(true);
   const errorButton = errorMsgDiv.querySelector(`.error__button`);
   main.appendChild(errorMsgDiv);
 
-  function msgErrorWindowClose() {
+  const msgErrorWindowClose = () => {
     document.querySelector(`.error`).remove();
     document.removeEventListener(`click`, msgErrorWindowClose);
     document.removeEventListener(`keydown`, onEscKeydownClick);
     errorButton.removeEventListener(`click`, msgErrorWindowClose);
-  }
+  };
 
-  function onEscKeydownClick(evt) {
+  const onEscKeydownClick = (evt) => {
     if (evt.key === `Escape`) {
       msgErrorWindowClose();
     }
-  }
+  };
 
   errorButton.addEventListener(`click`, msgErrorWindowClose);
   document.addEventListener(`click`, msgErrorWindowClose);
   document.addEventListener(`keydown`, onEscKeydownClick);
-}
+};
 
 window.page = {
   isActive: isPageActive,

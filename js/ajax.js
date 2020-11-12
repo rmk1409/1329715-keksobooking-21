@@ -5,7 +5,7 @@ const POST_DATA_URL = `https://21.javascript.pages.academy/keksobooking`;
 const TIMEOUT = 10000;
 const SUCCESS_STATUS_CODE = 200;
 
-function sendRequest(onSuccess, onError, method, data) {
+const sendRequest = (onSuccess, onError, method, data) => {
   const req = new XMLHttpRequest();
   req.timeout = TIMEOUT;
   req.responseType = `json`;
@@ -33,15 +33,15 @@ function sendRequest(onSuccess, onError, method, data) {
   } else {
     req.send();
   }
-}
+};
 
-function getData(onSuccess, onError) {
+const getData = (onSuccess, onError) => {
   sendRequest(onSuccess, onError, `GET`);
-}
+};
 
-function sendData(onSuccess, onError, data) {
+const sendData = (onSuccess, onError, data) => {
   sendRequest(onSuccess, onError, `POST`, data);
-}
+};
 
 window.ajax = {
   getData,

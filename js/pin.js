@@ -40,7 +40,7 @@ const housingFeatures = window.map.domElement.querySelector(`#housing-features`)
 
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
-function setupPin(pinData) {
+const setupPin = (pinData) => {
   const pin = pinTemplate.cloneNode(true);
   const img = pin.querySelector(`img`);
 
@@ -53,9 +53,9 @@ function setupPin(pinData) {
   img.alt = pinData.offer.title;
 
   return pin;
-}
+};
 
-function applyFiltering() {
+const applyFiltering = () => {
   let sortedData = window.data.ads;
 
   const typeValue = type.value;
@@ -101,23 +101,23 @@ function applyFiltering() {
   }
 
   return sortedData;
-}
+};
 
-function onMapPinsClick(evt) {
+const onMapPinsClick = (evt) => {
   const closest = evt.target.closest(`.map__pin[type=button]`);
   if (closest) {
     window.card.locateData(window.data.ads[closest.dataset.id]);
   }
-}
+};
 
-function onMapPinsEnterClick(evt) {
+const onMapPinsEnterClick = (evt) => {
   const closest = evt.target.closest(`.map__pin[type=button]`);
   if (evt.key === `Enter` && closest) {
     window.card.locateData(window.data.ads[closest.dataset.id]);
   }
-}
+};
 
-function locatePins() {
+const locatePins = () => {
   window.map.removeData();
 
   const pinsData = applyFiltering();
@@ -128,29 +128,29 @@ function locatePins() {
     fragment.appendChild(pin);
   }
   mapPins.appendChild(fragment);
-}
+};
 
-function onMainPinClick(evt) {
+const onMainPinClick = (evt) => {
   if (evt.button === MAIN_BUTTON_CODE) {
     window.page.activation();
   }
 
   document.addEventListener(`mousemove`, onDocumentMove);
   document.addEventListener(`mouseup`, onDocumentMouseup);
-}
+};
 
-function onDocumentMouseup() {
+const onDocumentMouseup = () => {
   document.removeEventListener(`mousemove`, onDocumentMove);
   document.removeEventListener(`mouseup`, onDocumentMouseup);
-}
+};
 
-function onMainPinEnterClick(evt) {
+const onMainPinEnterClick = (evt) => {
   if (evt.key === `Enter`) {
     window.page.activation();
   }
-}
+};
 
-function onDocumentMove(moveEvt) {
+const onDocumentMove = (moveEvt) => {
   const leftValue = window.util.getNumberValueFromStrPX(mainPin.style.left);
   const topValue = window.util.getNumberValueFromStrPX(mainPin.style.top);
 
@@ -175,14 +175,14 @@ function onDocumentMove(moveEvt) {
   mainPin.style.top = `${newTop}px`;
 
   window.form.setAddressField();
-}
+};
 
-function setMainPinToDefaultState() {
+const setMainPinToDefaultState = () => {
   mainPin.style.left = `${window.pin.mainData.defaultX}px`;
   mainPin.style.top = `${window.pin.mainData.defaultY}px`;
-}
+};
 
-function addListeners() {
+const addListeners = () => {
   mainPin.addEventListener(`mousedown`, onMainPinClick);
   mainPin.addEventListener(`keydown`, onMainPinEnterClick);
 
@@ -194,7 +194,7 @@ function addListeners() {
   roomCount.addEventListener(`change`, () => window.util.debounce(locatePins));
   guestCount.addEventListener(`change`, () => window.util.debounce(locatePins));
   housingFeatures.addEventListener(`change`, () => window.util.debounce(locatePins));
-}
+};
 
 addListeners();
 

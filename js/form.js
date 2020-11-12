@@ -27,7 +27,7 @@ const imgPreview = adForm.querySelector(`.ad-form__photo`);
 
 address.readOnly = true;
 
-function isRoomsAndPlacesOkay(evt) {
+const isRoomsAndPlacesOkay = (evt) => {
   const rooms = +roomNumber.value;
   const places = +capacityNumber.value;
   let msg = ``;
@@ -45,31 +45,31 @@ function isRoomsAndPlacesOkay(evt) {
   roomNumber.reportValidity();
 
   return Boolean(!msg);
-}
+};
 
-function onFormSubmit(evt) {
+const onFormSubmit = (evt) => {
   if (isRoomsAndPlacesOkay(evt)) {
     evt.preventDefault();
     window.ajax.sendData(window.page.onSuccess, window.page.onError, new FormData(adForm));
     window.page.deactivation();
   }
-}
+};
 
-function onTimeinChange() {
+const onTimeinChange = () => {
   checkout.querySelector(`option[value="${checkin.value}"]`).selected = true;
-}
+};
 
-function onTimeoutChange() {
+const onTimeoutChange = () => {
   checkin.querySelector(`option[value="${checkout.value}"]`).selected = true;
-}
+};
 
-function onTypeChange() {
+const onTypeChange = () => {
   const min = TypePriceRestricts[type.value.toUpperCase()];
   price.min = min;
   price.placeholder = min;
-}
+};
 
-function addListeners() {
+const addListeners = () => {
   roomNumber.addEventListener(`change`, isRoomsAndPlacesOkay);
   capacityNumber.addEventListener(`change`, isRoomsAndPlacesOkay);
   adForm.addEventListener(`submit`, onFormSubmit);
@@ -79,18 +79,18 @@ function addListeners() {
   resetButton.addEventListener(`click`, onResetButtonClick);
   avatar.addEventListener(`change`, onAvatarChange);
   image.addEventListener(`change`, onImagesChange);
-}
+};
 
-function onResetButtonClick() {
+const onResetButtonClick = () => {
   window.page.deactivation();
-}
+};
 
-function isImageFile(file) {
+const isImageFile = (file) => {
   const fileName = file.name.toLowerCase();
   return FILE_TYPES.some((it) => fileName.endsWith(it));
-}
+};
 
-function onAvatarChange() {
+const onAvatarChange = () => {
   const file = avatar.files[0];
   if (isImageFile(file)) {
     const reader = new FileReader();
@@ -99,9 +99,9 @@ function onAvatarChange() {
     });
     reader.readAsDataURL(file);
   }
-}
+};
 
-function onImagesChange() {
+const onImagesChange = () => {
   const file = image.files[0];
   if (isImageFile(file)) {
     const reader = new FileReader();
@@ -112,28 +112,28 @@ function onImagesChange() {
     });
     reader.readAsDataURL(file);
   }
-}
+};
 
-function setAddressField() {
+const setAddressField = () => {
   const y = window.page.isActive() ? window.pin.mainData.getActiveY() : window.pin.mainData.getInactiveY();
   const x = window.pin.mainData.getX();
   address.value = `${x}, ${y}`;
-}
+};
 
-function activation() {
+const activation = () => {
   adForm.classList.remove(`ad-form--disabled`);
   for (let fieldset of adForm.children) {
     fieldset.disabled = false;
   }
   setAddressField();
-}
+};
 
-function resetImagePreviews() {
+const resetImagePreviews = () => {
   avatarPreview.src = `img/muffin-grey.svg`;
   imgPreview.style.backgroundImage = ``;
-}
+};
 
-function deactivation() {
+const deactivation = () => {
   adForm.classList.add(`ad-form--disabled`);
   for (let fieldset of adForm.children) {
     fieldset.disabled = true;
@@ -142,7 +142,7 @@ function deactivation() {
   setAddressField();
   resetImagePreviews();
   onTypeChange();
-}
+};
 
 addListeners();
 
